@@ -2,6 +2,7 @@ package com.zzy.petclinic.services.map;
 
 import com.zzy.petclinic.model.Speciality;
 import com.zzy.petclinic.model.Vet;
+import com.zzy.petclinic.services.SpecialityService;
 import com.zzy.petclinic.services.VetService;
 import org.springframework.stereotype.Service;
 

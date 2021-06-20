@@ -2,9 +2,9 @@ package com.zzy.petclinic.bootstrap;
 
 import com.zzy.petclinic.model.*;
 import com.zzy.petclinic.services.OwnerService;
+import com.zzy.petclinic.services.SpecialityService;
 import com.zzy.petclinic.services.VetService;
 import com.zzy.petclinic.services.PetTypeService;
-import com.zzy.petclinic.services.map.SpecialityService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
