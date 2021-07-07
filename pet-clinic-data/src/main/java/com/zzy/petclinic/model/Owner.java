@@ -1,6 +1,9 @@
 package com.zzy.petclinic.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -8,9 +11,8 @@ import java.util.Set;
 
 @Setter
 @Getter
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "owners")
 public class Owner extends Person {

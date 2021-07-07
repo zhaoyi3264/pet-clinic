@@ -1,12 +1,15 @@
 package com.zzy.petclinic.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @Setter
 @Getter
+@SuperBuilder
+@NoArgsConstructor
 @MappedSuperclass
 public class Person extends BaseEntity {
 
