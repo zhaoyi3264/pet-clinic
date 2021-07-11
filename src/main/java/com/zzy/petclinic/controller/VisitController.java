@@ -5,6 +5,7 @@ import com.zzy.petclinic.model.Visit;
 import com.zzy.petclinic.service.PetService;
 import com.zzy.petclinic.service.VisitService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 public class VisitController {
@@ -27,28 +28,26 @@ public class VisitController {
     }
 
     @ModelAttribute("visit")
-    public Visit loadPetWithVisit(@PathVariable("petId") int petId, Map<String, Object> model) {
+    public Visit loadPetWithVisit(@PathVariable("petId") int petId, ModelMap model) {
         Pet pet = this.petService.findById(petId);
-        pet.setVisits(new HashSet<>(this.visitService.findByPetId(petId)));
-        model.put("pet", pet);
+        List<Visit> visits = this.visitService.findByPetId(petId);
+        pet.setVisits(new HashSet<>(visits));
         Visit visit = new Visit();
         pet.addVisit(visit);
+        model.put("pet", pet);
         return visit;
     }
 
-    // Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is called
     @GetMapping("/owners/*/pets/{petId}/visits/new")
-    public String initNewVisitForm(@PathVariable("petId") int petId, Map<String, Object> model) {
+    public String initNewVisitForm() {
         return "pets/createOrUpdateVisitForm";
     }
 
-    // Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is called
     @PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
     public String processNewVisitForm(@Valid Visit visit, BindingResult result) {
         if (result.hasErrors()) {
             return "pets/createOrUpdateVisitForm";
-        }
-        else {
+        } else {
             this.visitService.save(visit);
             return "redirect:/owners/{ownerId}";
         }

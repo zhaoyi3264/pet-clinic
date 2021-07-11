@@ -1,4 +1,4 @@
-package com.zzy.petclinic.model.formatter;
+package com.zzy.petclinic.formatter;
 
 import com.zzy.petclinic.model.PetType;
 import com.zzy.petclinic.service.PetTypeService;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.util.Locale;
 
+// TODO: read about this
 @Component
 public class PetTypeFormatter implements Formatter<PetType> {
 

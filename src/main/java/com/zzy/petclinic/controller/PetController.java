@@ -81,8 +81,7 @@ public class PetController {
             pet.setOwner(owner);
             model.put("pet", pet);
             return "pets/createOrUpdatePetForm";
-        }
-        else {
+        } else {
             owner.addPet(pet);
             this.petService.save(pet);
             return "redirect:/owners/{ownerId}";

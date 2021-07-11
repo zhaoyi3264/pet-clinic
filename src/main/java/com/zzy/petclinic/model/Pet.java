@@ -27,6 +27,7 @@ public class Pet extends NamedEntity {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
+    // TODO: save visit in database
     @Transient
     private Set<Visit> visits = new HashSet<>();
 

@@ -2,20 +2,22 @@ package com.zzy.petclinic.controller;
 
 import com.zzy.petclinic.model.Owner;
 import com.zzy.petclinic.model.Pet;
+import com.zzy.petclinic.model.Visit;
 import com.zzy.petclinic.service.OwnerService;
 import com.zzy.petclinic.service.VisitService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 public class OwnerController {
@@ -28,10 +30,14 @@ public class OwnerController {
         this.visitService = visitService;
     }
 
+    @InitBinder
+    public void setAllowedFields(WebDataBinder dataBinder) {
+        dataBinder.setDisallowedFields("id");
+    }
+
     @GetMapping("/owners/new")
-    public String initCreationForm(Map<String, Object> model) {
-        Owner owner = new Owner();
-        model.put("owner", owner);
+    public String initCreationForm(ModelMap model) {
+        model.put("owner", new Owner());
         return "owners/createOrUpdateOwnerForm";
     }
 
@@ -46,17 +52,15 @@ public class OwnerController {
     }
 
     @GetMapping("/owners/find")
-    public String initFindForm(Map<String, Object> model) {
+    public String initFindForm(ModelMap model) {
         model.put("owner", new Owner());
         return "owners/findOwners";
     }
 
     @GetMapping("/owners")
-    public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
-
-        // allow parameterless GET request for /owners to return all records
+    public String processFindForm(Owner owner, BindingResult result, ModelMap model) {
         if (owner.getLastName() == null) {
-            owner.setLastName(""); // empty string signifies broadest possible search
+            owner.setLastName("");
         }
 
         Collection<Owner> results = this.ownerService.findByLastNameLike("%" + owner.getLastName() + "%");
@@ -73,20 +77,20 @@ public class OwnerController {
     }
 
     @GetMapping("/owners/{ownerId}")
-    public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
-        ModelAndView mav = new ModelAndView("owners/ownerDetails");
+    public String showOwner(@PathVariable("ownerId") int ownerId, ModelMap model) {
         Owner owner = this.ownerService.findById(ownerId);
         for (Pet pet : owner.getPets()) {
-            pet.setVisits(new HashSet<>(this.visitService.findByPetId(pet.getId())));
+            List<Visit> visits = this.visitService.findByPetId(pet.getId());
+            pet.setVisits(new HashSet<>(visits));
         }
-        mav.addObject(owner);
-        return mav;
+        model.put("owner", owner);
+        return "owners/ownerDetails";
     }
 
     @GetMapping("/owners/{ownerId}/edit")
-    public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) {
+    public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, ModelMap model) {
         Owner owner = this.ownerService.findById(ownerId);
-        model.addAttribute(owner);
+        model.put("owner", owner);
         return "owners/createOrUpdateOwnerForm";
     }
 
