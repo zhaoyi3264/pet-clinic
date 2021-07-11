@@ -29,4 +29,9 @@ public class Pet extends NamedEntity {
 
     @Transient
     private Set<Visit> visits = new HashSet<>();
+
+    public void addVisit(Visit visit) {
+        this.visits.add(visit);
+        visit.setPetId(this.getId());
+    }
 }

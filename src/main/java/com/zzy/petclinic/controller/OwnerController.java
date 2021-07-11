@@ -1,7 +1,9 @@
 package com.zzy.petclinic.controller;
 
 import com.zzy.petclinic.model.Owner;
+import com.zzy.petclinic.model.Pet;
 import com.zzy.petclinic.service.OwnerService;
+import com.zzy.petclinic.service.VisitService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,15 +14,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 @Controller
 public class OwnerController {
 
     private final OwnerService ownerService;
+    private final VisitService visitService;
 
-    public OwnerController(OwnerService ownerService) {
+    public OwnerController(OwnerService ownerService, VisitService visitService) {
         this.ownerService = ownerService;
+        this.visitService = visitService;
     }
 
     @GetMapping("/owners/new")
@@ -58,12 +63,10 @@ public class OwnerController {
         if (results.isEmpty()) {
             result.rejectValue("lastName", "notFound", "not found");
             return "owners/findOwners";
-        }
-        else if (results.size() == 1) {
+        } else if (results.size() == 1) {
             owner = results.iterator().next();
             return "redirect:/owners/" + owner.getId();
-        }
-        else {
+        } else {
             model.put("selections", results);
             return "owners/ownersList";
         }
@@ -73,9 +76,9 @@ public class OwnerController {
     public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
         Owner owner = this.ownerService.findById(ownerId);
-//        for (Pet pet : owner.getPets()) {
-//            pet.setVisitsInternal(visits.findByPetId(pet.getId()));
-//        }
+        for (Pet pet : owner.getPets()) {
+            pet.setVisits(new HashSet<>(this.visitService.findByPetId(pet.getId())));
+        }
         mav.addObject(owner);
         return mav;
     }
@@ -92,8 +95,7 @@ public class OwnerController {
                                          @PathVariable("ownerId") int ownerId) {
         if (result.hasErrors()) {
             return "owners/createOrUpdateOwnerForm";
-        }
-        else {
+        } else {
             owner.setId(ownerId);
             this.ownerService.save(owner);
             return "redirect:/owners/{ownerId}";
