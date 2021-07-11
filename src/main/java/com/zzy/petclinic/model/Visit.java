@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
@@ -24,6 +22,7 @@ public class Visit extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "pet_id")
-    private Integer petId;
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
 }

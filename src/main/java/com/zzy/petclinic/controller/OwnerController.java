@@ -1,8 +1,6 @@
 package com.zzy.petclinic.controller;
 
 import com.zzy.petclinic.model.Owner;
-import com.zzy.petclinic.model.Pet;
-import com.zzy.petclinic.model.Visit;
 import com.zzy.petclinic.service.OwnerService;
 import com.zzy.petclinic.service.VisitService;
 import org.springframework.stereotype.Controller;
@@ -16,18 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 @Controller
 public class OwnerController {
 
     private final OwnerService ownerService;
-    private final VisitService visitService;
 
-    public OwnerController(OwnerService ownerService, VisitService visitService) {
+    public OwnerController(OwnerService ownerService) {
         this.ownerService = ownerService;
-        this.visitService = visitService;
     }
 
     @InitBinder
@@ -79,10 +73,6 @@ public class OwnerController {
     @GetMapping("/owners/{ownerId}")
     public String showOwner(@PathVariable("ownerId") int ownerId, ModelMap model) {
         Owner owner = this.ownerService.findById(ownerId);
-        for (Pet pet : owner.getPets()) {
-            List<Visit> visits = this.visitService.findByPetId(pet.getId());
-            pet.setVisits(new HashSet<>(visits));
-        }
         model.put("owner", owner);
         return "owners/ownerDetails";
     }
@@ -95,8 +85,7 @@ public class OwnerController {
     }
 
     @PostMapping("/owners/{ownerId}/edit")
-    public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result,
-                                         @PathVariable("ownerId") int ownerId) {
+    public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") int ownerId) {
         if (result.hasErrors()) {
             return "owners/createOrUpdateOwnerForm";
         } else {

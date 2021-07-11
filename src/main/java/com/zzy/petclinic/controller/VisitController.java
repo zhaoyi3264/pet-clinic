@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
 
 @Controller
 public class VisitController {
@@ -30,8 +28,6 @@ public class VisitController {
     @ModelAttribute("visit")
     public Visit loadPetWithVisit(@PathVariable("petId") int petId, ModelMap model) {
         Pet pet = this.petService.findById(petId);
-        List<Visit> visits = this.visitService.findByPetId(petId);
-        pet.setVisits(new HashSet<>(visits));
         Visit visit = new Visit();
         pet.addVisit(visit);
         model.put("pet", pet);

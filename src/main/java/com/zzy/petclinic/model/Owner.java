@@ -28,7 +28,7 @@ public class Owner extends Person {
     @Column(name = "telephone")
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "owner")
     private Set<Pet> pets = new HashSet<>();
 
     public void addPet(Pet pet) {
@@ -43,9 +43,5 @@ public class Owner extends Person {
                 .filter(pet -> !pet.isNew() && pet.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public Set<Pet> getPets() {
-        return this.pets;
     }
 }
