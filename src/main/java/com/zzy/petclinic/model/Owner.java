@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,5 +29,23 @@ public class Owner extends Person {
     private String telephone;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
-    private Set<Pet> pets;
+    private Set<Pet> pets = new HashSet<>();
+
+    public void addPet(Pet pet) {
+        if (pet.isNew()) {
+            this.pets.add(pet);
+        }
+        pet.setOwner(this);
+    }
+
+    public Pet getPet(String name) {
+        return this.pets.stream()
+                .filter(pet -> !pet.isNew() && pet.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Set<Pet> getPets() {
+        return this.pets;
+    }
 }
