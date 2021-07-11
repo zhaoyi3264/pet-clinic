@@ -2,8 +2,10 @@ package com.zzy.petclinic.controller;
 
 import com.zzy.petclinic.model.Owner;
 import com.zzy.petclinic.model.Pet;
+import com.zzy.petclinic.model.PetType;
 import com.zzy.petclinic.service.OwnerService;
 import com.zzy.petclinic.service.PetService;
+import com.zzy.petclinic.service.PetTypeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -12,17 +14,25 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 
 @Controller
 @RequestMapping("/owners/{ownerId}")
 public class PetController {
 
     private final PetService petService;
+    private final PetTypeService petTypeService;
     private final OwnerService ownerService;
 
-    public PetController(PetService petService, OwnerService ownerService) {
+    public PetController(PetService petService, PetTypeService petTypeService, OwnerService ownerService) {
         this.petService = petService;
+        this.petTypeService = petTypeService;
         this.ownerService = ownerService;
+    }
+
+    @ModelAttribute("types")
+    public Collection<PetType> populatePetTypes() {
+        return this.petTypeService.findAll();
     }
 
     @ModelAttribute("owner")
